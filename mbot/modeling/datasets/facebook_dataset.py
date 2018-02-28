@@ -45,14 +45,14 @@ class FacebookDataset(Dataset):
         Brains of the operation
         iterates through cleansing and formatting steps before returning
         final dataframe of the form:
-            TIME | INPUT | MY RESPONSE
+            INPUT | MY RESPONSE
         '''
         parsed_data = self.load_parsed_data()
         cleaned_data = self.clean_dataset(parsed_data)
         condensed_data = self.condense_by_sender(cleaned_data)
         response_data = self.condense_by_response(condensed_data)
 
-        return pd.DataFrame(response_data, columns=['request', 'response'])
+        return pd.DataFrame(response_data, columns=[self.x_column, self.y_column])
 
     @staticmethod
     def clean_dataset(data):
@@ -121,6 +121,7 @@ class FacebookDataset(Dataset):
         Treats all other senders as the same and separates my responses
         based on their input
         '''
+        #TODO: separate messages by thread
         response_list = []
         tmp_dict = {'received': [], 'sent': []}
         message_is_received = True

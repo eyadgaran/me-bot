@@ -146,3 +146,4 @@ target/
 # Custom Project Stuff #
 ########################
 data/
+logs/

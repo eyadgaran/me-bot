@@ -18,7 +18,9 @@ MODEL_DIRECTORY = os.path.join(DATA_DIRECTORY, 'models')
 EMBEDDING_DIRECTORY = os.path.join(DATA_DIRECTORY, 'embeddings')
 DATABASE_DIRECTORY = os.path.join(DATA_DIRECTORY, 'db')
 
-for directory in [DATA_DIRECTORY, RAW_DATA_DIRECTORY, PARSED_DATA_DIRECTORY,
+LOG_DIRECTORY = os.path.join(REPO_DIRECTORY, 'logs')
+
+for directory in [LOG_DIRECTORY, DATA_DIRECTORY, RAW_DATA_DIRECTORY, PARSED_DATA_DIRECTORY,
                   MODEL_DIRECTORY, EMBEDDING_DIRECTORY, DATABASE_DIRECTORY]:
     if not os.path.exists(directory):
         os.mkdir(directory)
