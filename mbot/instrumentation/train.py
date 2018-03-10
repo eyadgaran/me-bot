@@ -1,11 +1,12 @@
 from mbot.modeling.datasets.facebook_dataset import FacebookDataset
+from mbot.modeling.datasets.cornell_dataset import CornellDataset
 from mbot.modeling.datasets.combined_dataset import CombinedDataset
 from mbot.modeling.models.preprocessor import Preprocessor
 from mbot.modeling.models.seq2seq import Seq2Seq
 
 __author__ = 'Elisha Yadgaran'
 
-DATASETS = [FacebookDataset]
+DATASETS = [FacebookDataset, CornellDataset]
 
 
 def create_dataset(datasets, load_raw_data=False):
@@ -37,7 +38,7 @@ def create_model(preprocessor):
 
 
 if __name__ == '__main__':
-    dataset = create_dataset(['FacebookDataset'])
+    dataset = create_dataset(['FacebookDataset', 'CornellDataset'])
     preprocessor = preprocess_dataset(dataset)
     model = create_model(preprocessor)
     model.train(dataset.x, dataset.y)

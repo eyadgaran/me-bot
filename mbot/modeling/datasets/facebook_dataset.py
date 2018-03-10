@@ -109,6 +109,7 @@ class FacebookDataset(Dataset):
         current_sender = formatted_data[0].sender
         for message in formatted_data:
             if message.sender != current_sender:
+                current_sender = message.sender
                 stack.pop_stack()
             stack.append_stack(message)
         stack.pop_stack()
