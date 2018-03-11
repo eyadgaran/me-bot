@@ -62,12 +62,14 @@ class Seq2Seq(object):
 
     def compile_model(self, learning_rate=0.005, **kwargs):
         optimizer = Adam(lr=learning_rate, clipvalue=5.0)
-        self.internal_model.compile(optimizer=optimizer, loss='categorical_crossentropy')
+        self.internal_model.compile(optimizer=optimizer, loss='sparse_categorical_crossentropy')
 
     def train(self, x, y, epochs=250, batch_size=5, test_split=0.1):
         processed_x = np.stack(x.apply(self.preprocessor.transform).values)
         processed_y = np.stack(y.apply(self.preprocessor.transform).values)
         train_x, test_x, train_y, test_y = train_test_split(processed_x, processed_y, test_size=test_split, random_state=5)
+        del processed_x
+        del processed_y
 
         # Add start tokens to responses - shifts indices by one so encoded labels
         # are the predicted next word
@@ -75,8 +77,10 @@ class Seq2Seq(object):
         prefixed_test_y = self.preprocessor.add_start_token(test_y)
 
         # Encode y into one-hot vectors
-        encoded_train_y = self.preprocessor.encode_labels(train_y)
-        encoded_test_y = self.preprocessor.encode_labels(test_y)
+        # Too memory intensive so use with sparse_categorical_crossentropy
+        # or use generator to encode on the fly
+        # encoded_train_y = self.preprocessor.encode_labels(train_y)
+        # encoded_test_y = self.preprocessor.encode_labels(test_y)
 
         # TensorBoard for visualization
         tensorboard = TensorBoard(log_dir="{}/{}".format(LOG_DIRECTORY, time()))
@@ -85,14 +89,15 @@ class Seq2Seq(object):
         for epoch in tqdm(range(epochs)):
             self.internal_model.fit(
                 [train_x, prefixed_train_y],
-                encoded_train_y,
+                np.expand_dims(train_y, -1),
+                # encoded_train_y,
                 epochs=1,
                 batch_size=batch_size,
                 callbacks=[tensorboard]
             )
 
             print 'Test results: {}'.format(self.internal_model.evaluate(
-                [test_x, prefixed_test_y], encoded_test_y))
+                [test_x, prefixed_test_y], test_y)) #encoded_test_y))
 
             test_inputs = [
                 "Hey, how's it going?",
@@ -145,3 +150,4 @@ class Seq2Seq(object):
 # References
 # https://www.kaggle.com/elishay/twitter-basic-seq2seq
 # https://machinelearningmastery.com/teacher-forcing-for-recurrent-neural-networks/
+# https://towardsdatascience.com/how-to-create-data-products-that-are-magical-using-sequence-to-sequence-models-703f86a231f8

@@ -47,7 +47,7 @@ class Preprocessor(object):
         tokenizer = TweetTokenizer(strip_handles=True, preserve_case=False, reduce_len=True)
 
         # Vectorize all the tokens so we have a unique map of id: word
-        count_vec = CountVectorizer(tokenizer=tokenizer.tokenize, min_df=self.min_document_freq)
+        count_vec = CountVectorizer(tokenizer=tokenizer.tokenize, min_df=self.min_document_freq, decode_error='ignore')
         count_vec.fit(tqdm(dataset))
 
         # Shift vocabulary to insert placeholder values
