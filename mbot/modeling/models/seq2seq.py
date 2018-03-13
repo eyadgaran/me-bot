@@ -64,7 +64,7 @@ class Seq2Seq(object):
         optimizer = Adam(lr=learning_rate, clipvalue=5.0)
         self.internal_model.compile(optimizer=optimizer, loss='sparse_categorical_crossentropy')
 
-    def train(self, x, y, epochs=250, batch_size=5, test_split=0.1):
+    def train(self, x, y, epochs=250, batch_size=5, test_split=0.1, save=True):
         processed_x = np.stack(x.apply(self.preprocessor.transform).values)
         processed_y = np.stack(y.apply(self.preprocessor.transform).values)
         train_x, test_x, train_y, test_y = train_test_split(processed_x, processed_y, test_size=test_split, random_state=5)
@@ -97,7 +97,7 @@ class Seq2Seq(object):
             )
 
             print 'Test results: {}'.format(self.internal_model.evaluate(
-                [test_x, prefixed_test_y], test_y)) #encoded_test_y))
+                [test_x, prefixed_test_y], np.expand_dims(test_y, -1))) #encoded_test_y))
 
             test_inputs = [
                 "Hey, how's it going?",
@@ -108,6 +108,9 @@ class Seq2Seq(object):
             for input_string in test_inputs:
                 output_string = self.predict(input_string)
                 print input_string, '\n', output_string
+
+            if save:
+                self.save()
 
     def predict(self, sentence):
         max_message_length = self.preprocessor.max_message_length

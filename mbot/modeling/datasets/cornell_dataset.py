@@ -118,3 +118,6 @@ class CornellDataset(Dataset):
     	message = re.sub(' +',' ', message)
 
         return message
+
+# Source
+# https://www.cs.cornell.edu/~cristian/Cornell_Movie-Dialogs_Corpus.html
